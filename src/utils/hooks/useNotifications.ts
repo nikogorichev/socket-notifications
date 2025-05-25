@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { Subscription } from "rxjs";
 import {
-  EventChannel,
-  WSClient,
+  EventChannelImpl,
+  WSClientImpl,
   type NotificationMessage,
 } from "../../services";
 
 const wsUrl = "ws://localhost:1234";
 
-const channel = new EventChannel();
-const wsClient = new WSClient(wsUrl, (msg) => channel.publish(msg));
+const channel = new EventChannelImpl();
+const wsClient = new WSClientImpl(wsUrl, (msg) => channel.publish(msg));
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState<NotificationMessage[]>([]);

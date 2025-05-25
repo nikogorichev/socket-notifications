@@ -1,6 +1,15 @@
+import { LoggerImpl } from "./Logger";
+
 type MessageCallback = (msg: string) => void;
 
-export class WSClient {
+interface WSClient {
+  send(message: string): void;
+  close(): void;
+}
+
+const log = new LoggerImpl("WSClient");
+
+export class WSClientImpl implements WSClient {
   private socket: WebSocket | null = null;
   private readonly url: string;
   private readonly onMessage: MessageCallback;
@@ -18,39 +27,41 @@ export class WSClient {
     this.socket = new WebSocket(this.url);
 
     this.socket.onopen = () => {
-      console.log("WebSocket connected");
+      log.info("Вебсокет подключен");
       this.reconnectAttempts = 0;
     };
 
     this.socket.onmessage = (event) => {
+      log.debug("Получен ивент", event.data);
       this.onMessage(event.data);
     };
 
     this.socket.onclose = () => {
-      console.warn("WebSocket closed");
+      log.warn("Вебсокет отключен");
       if (
         !this.isManuallyClosed &&
         this.reconnectAttempts < this.maxReconnectAttempts
       ) {
         const delay = 1000 * 2 ** this.reconnectAttempts;
-        console.log(`Reconnecting in ${delay}ms...`);
+        log.info(`Переподключение через ${delay}мс`);
         setTimeout(() => this.connect(), delay);
         this.reconnectAttempts++;
       } else {
-        console.error("Max reconnect attempts reached");
+        log.error("Максимальное количество переподключений достигнуто");
       }
     };
 
-    this.socket.onerror = () => {
+    this.socket.onerror = (error) => {
+      log.error("Ошибка вебсокета", error);
       this.socket?.close();
     };
   }
 
-  public send(message: string) {
+  send(message: string) {
     this.socket?.send(message);
   }
 
-  public close() {
+  close() {
     this.isManuallyClosed = true;
     this.socket?.close();
   }

@@ -1,11 +1,11 @@
-import './App.css'
-import NotificationList from './components/NotificationList'
-import { useNotifications } from './utils/hooks/useNotifications'
+import "./App.css";
+import { NotificationList } from "./components";
+import { useNotifications } from "./utils";
 
 function App() {
-  const notifications = useNotifications()
+  const notifications = useNotifications();
 
-  return <NotificationList notifications={notifications} />
+  return <NotificationList notifications={notifications} />;
 }
 
-export default App
+export default App;

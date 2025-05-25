@@ -4,7 +4,7 @@ type Props = {
   notifications: NotificationMessage[];
 };
 
-const NotificationList = (props: Props) => {
+export const NotificationList = (props: Props) => {
   const { notifications } = props;
   return (
     <>
@@ -20,5 +20,3 @@ const NotificationList = (props: Props) => {
     </>
   );
 };
-
-export default NotificationList;
